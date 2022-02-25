@@ -15,11 +15,15 @@ conda install -c bccp nbodykit
 
 Need to include the path to pyopenvdb library to the LD_LIBRARY_PATH
 ```
-echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.conda/envs/blender_env/lib/:$HOME/.conda/envs/blender_env/lib/python3.7/site-packages/"
+echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.conda/envs/blender_env/lib/:$HOME/.conda/envs/blender_env/lib/python3.7/site-packages/" >> ~/.bashrc
 ```
 Or replace $HOME/.conda to the place you installed your environment.
+
+Note: partially adopted from the script yueying gave me and mahdi's script.
 """
 from typing import Optional
+
+import argparse
 
 import numpy as np
 import pyopenvdb as vdb
@@ -66,7 +70,7 @@ def get_nonlin_fields(inpath: str, field: int = 1, Nmesh: Optional[int] = None,
 
     painted_field = mesh.paint(mode="real")
 
-    return painted_field
+    return painted_field.value # I want ndarray
     
 
 def bigfile2vdb(inpath: str, output_name: str = "MPGadget_tutorial_fullphysics.vdb",
@@ -106,3 +110,18 @@ def bigfile2vdb(inpath: str, output_name: str = "MPGadget_tutorial_fullphysics.v
     dataCube[-1].transform = vdb.createLinearTransform(voxelSize=1/(Nmesh))
 
     vdb.write(output_name, grids=dataCube)
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--inpath", type=str, help="Path to the bigfile snapshot")
+    parser.add_argument("--output_name", type=int, default="output.vdb", help="Output .vdb name")
+
+    # input file and out file paths
+    parser.add_argument("--Nmesh", type=int, help="The size of 3D painted field you want.")
+    parser.add_argument("--resampler", type=str, default="tsc", help="Window mathods in Nbodykit for painting the field.")
+
+    args = parser.parse_args()
+
+    bigfile2vdb(args.inpath, args.output_name, args.Nmesh, args.resampler)
