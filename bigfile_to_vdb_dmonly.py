@@ -116,7 +116,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--inpath", type=str, help="Path to the bigfile snapshot")
-    parser.add_argument("--output_name", type=int, default="output.vdb", help="Output .vdb name")
+    parser.add_argument("--output_name", type=str, default="output.vdb", help="Output .vdb name")
 
     # input file and out file paths
     parser.add_argument("--Nmesh", type=int, help="The size of 3D painted field you want.")
